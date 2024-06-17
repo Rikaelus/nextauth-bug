@@ -49,52 +49,24 @@ const config = {
   theme: { logo: "https://authjs.dev/img/logo-sm.png" },
   adapter: UnstorageAdapter(storage),
   providers: [
-    Apple,
-    Auth0,
-    AzureB2C({
-      clientId: process.env.AUTH_AZURE_AD_B2C_ID,
-      clientSecret: process.env.AUTH_AZURE_AD_B2C_SECRET,
-      issuer: process.env.AUTH_AZURE_AD_B2C_ISSUER,
-    }),
-    BankIDNorway,
-    BoxyHQSAML({
-      clientId: "dummy",
-      clientSecret: "dummy",
-      issuer: process.env.AUTH_BOXYHQ_SAML_ISSUER,
-    }),
-    Cognito,
-    Coinbase,
-    Discord,
-    Dropbox,
-    Facebook,
-    GitHub,
-    GitLab,
-    Google,
-    Hubspot,
-    Keycloak({ name: "Keycloak (bob/bob)" }),
-    LinkedIn,
-    Netlify,
-    Okta,
-    Passkey({
-      formFields: {
-        email: {
-          label: "Username",
-          required: true,
-          autocomplete: "username webauthn",
-        },
+    {
+      id: 'idcs',
+      name: 'IDCS Authentication Scheme',
+      type: 'oauth',
+      issuer: 'https://identity.oraclecloud.com',
+      authorization: { params: { scope: 'openid profile email groups' } },
+      wellKnown: 'https://idcs-01023b3d6830473585f63c240c0da80f.identity.oraclecloud.com/.well-known/openid-configuration',
+      clientId: '5cbb9089e4e54ab69658940964faa9ab',
+      clientSecret: '######',
+      async profile(profile){
+        return {
+          id: profile?.sub,
+          name: profile?.name,
+          email: profile?.email,
+          image: profile?.picture,
+        };
       },
-    }),
-    Passage,
-    Pinterest,
-    Reddit,
-    Slack,
-    Spotify,
-    Twitch,
-    Twitter,
-    WorkOS({
-      connection: process.env.AUTH_WORKOS_CONNECTION!,
-    }),
-    Zoom,
+    }
   ],
   basePath: "/auth",
   callbacks: {
